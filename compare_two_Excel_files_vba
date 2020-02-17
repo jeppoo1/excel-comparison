@@ -1,0 +1,65 @@
+
+' To run this Excel macro, run the "RunCompare" part of the program and set a shortcut for it. 
+' Source: https://www.mrexcel.com/board/threads/macro-compare-two-sheet-with-rows-in-different-order-using-one-column-as-id.877804/
+' "I managed to create the macro I was looking for and here is the code in case somebody needs something similar. It also have a function to clear all the highlighted cells in one sheet or all sheets. Now I'll work in that code to make the same in more then two sheets."
+
+
+Sub compare_two_excel_sheets_added_rows()
+
+End Sub
+Sub RunCompare()
+
+Call compareSheets("Sheet1", "Sheet2")
+
+End Sub
+
+
+Sub compareSheets(shtSheet1 As String, shtSheet2 As String)
+
+Dim c As Integer, j As Integer, i As Integer, mydiffs As Integer, cnt1 As Integer, cnt2 As Integer
+Dim noexist As Integer
+
+
+cnt2 = ThisWorkbook.Worksheets("Sheet2").Cells.SpecialCells(xlCellTypeLastCell).Row
+cnt1 = ThisWorkbook.Worksheets("Sheet1").Cells.SpecialCells(xlCellTypeLastCell).Row
+'For each cell in sheet2 that is not the same in Sheet1, color it yellow
+
+
+For i = 1 To cnt2
+    For j = 1 To cnt1
+        If ActiveWorkbook.Worksheets(shtSheet2).Cells(i, 1).Value = ActiveWorkbook.Worksheets(shtSheet1).Cells(j, 1).Value Then
+            For c = 2 To 22
+                If Not ActiveWorkbook.Worksheets(shtSheet2).Cells(i, c).Value = ActiveWorkbook.Worksheets(shtSheet1).Cells(j, c).Value Then
+                    ActiveWorkbook.Worksheets(shtSheet2).Cells(i, c).Interior.Color = vbYellow
+                    mydiffs = mydiffs + 1
+                End If
+            Next
+        Exit For
+        End If
+        If j = cnt1 Then
+            ActiveWorkbook.Worksheets(shtSheet2).Cells(i, 1).Interior.Color = vbRed
+        End If
+    Next
+Next
+
+'Display a message box to demonstrate the differences and if there is a new entry on the second sheet
+MsgBox mydiffs & ":differences found, " & noexist & ":no exist", vbInformation
+
+ActiveWorkbook.Sheets(shtSheet2).Select
+
+End Sub
+
+
+Sub Clear_Highlights_this_Sheet()
+ActiveSheet.UsedRange. _
+Interior.ColorIndex = xlNone
+End Sub
+
+
+
+Sub Clear_Highlights_All_Sheets()
+Dim sht As Worksheet
+For Each sht In Sheets
+sht.UsedRange.Interior.ColorIndex = xlNone
+Next
+End Sub
